@@ -12,7 +12,7 @@ echo Emacs update
 echo ********************************************************
 echo;
 
-call :Emacs_Setting
+call :Emacs_Clone
 
 exit /b 1
 
@@ -116,6 +116,9 @@ cinst 7zip -y
 if errorlevel 1 goto FAILURE
 echo Install Gnuplot
 cinst gnuplot -y
+if errorlevel 1 goto FAILURE
+echo Install StrawberryPerl
+choco install strawberryperl -y
 if errorlevel 1 goto FAILURE
 rem GSviewは選択項目が多いのでバッチ化に不向き．
 rem echo Install GSview
@@ -252,8 +255,24 @@ cp -rf bin var libexec share %ChocolateyBinRoot%\Chocolatey\lib\Emacs*\tools
 exit /b
 
 
-rem Emacsの設定ファイルをGitのものに更新する．
+rem Emacsの設定に必要なファイルをダウンロードする．
 :Emacs_Setting
+echo ***** Install Emacs setting *****
+
+call :Emacs_Clone
+
+rem Markdwon用のPerlファイルをダウンロードする．
+wget http://daringfireball.net/projects/downloads/Markdown_1.0.1.zip
+if errorlevel 1 goto CHOCO_FAILURE
+unzip Markdown_1.0.1.zip
+rem StrawberryPerlの設定フォルダに置く．
+cd Markdown_1.0.1\Markdown.pl \strawberry\perl\site\bin\Markdown.pl
+
+exit /b
+
+
+rem Emacsの設定ファイルをGitのものに更新する．
+:Emacs_Clone
 echo ***** Install Emacs setting *****
 
 rem Gitからクローンする場合はこちら．
